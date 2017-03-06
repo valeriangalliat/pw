@@ -9,7 +9,7 @@
     "url": "https://val.codejam.info/"
   },
   "bin": {
-    "pw": "pw"
+    "pw": "bin/pw"
   },
   "repository": {
     "type": "git",

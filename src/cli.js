@@ -5,8 +5,9 @@ const read = denodeify(require('read'))
 const edit = require('./edit')
 const get = require('./get')
 const makeStore = require('./store')
-const pkg = require('./package')
 const update = require('./update')
+
+const pkg = require('../package')
 
 const args = docopt(`
 Usage:
