@@ -28,7 +28,7 @@ const storePath = process.env.PW_STORE || `${process.env.HOME}/.pw`
 
 const getStore = () =>
   read({ prompt: 'Password:', silent: true })
-    .then(key => makeStore(storePath, key))
+    .then(pass => makeStore(storePath, pass))
 
 if (args['--edit']) {
   getStore()
