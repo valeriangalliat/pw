@@ -11,7 +11,7 @@ const pkg = require('../package')
 
 const args = docopt(`
 Usage:
-  pw <name>
+  pw <name> [--2fa]
   pw -e | --edit
   pw -u | --update
   pw -h | --help
@@ -22,6 +22,7 @@ Options:
   --version     Show version.
   -e, --edit    Edit store.
   -u, --update  Update store password.
+  --2fa         Enable 2FA.
 `, { version: pkg.version })
 
 const storePath = process.env.PW_STORE || `${process.env.HOME}/.pw`
@@ -37,5 +38,5 @@ if (args['--edit']) {
   update(storePath)
 } else if (args['<name>']) {
   getStore()
-    .then(store => get(store, args['<name>']))
+    .then(store => get(store, args['<name>'], args['--2fa']))
 }

@@ -1,6 +1,6 @@
 {
   "name": "pw",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Dead simple password manager.",
   "homepage": "https://github.com/valeriangalliat/pw",
   "license": "Unlicense",
@@ -30,6 +30,7 @@
     "password-generator": "^2.1.0",
     "random-int": "^1.0.0",
     "read": "^1.0.7",
+    "speakeasy": "^2.0.0",
     "tmp": "*"
   },
   "devDependencies": {

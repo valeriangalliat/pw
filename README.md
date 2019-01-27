@@ -15,6 +15,16 @@ It will prompt you for your store password (by default, `~/.pw`, can be
 overridden with `PW_STORE` environment variable). If there's no store,
 the password you give will become your store password for further usages.
 
+```
+pw <name> --2fa
+```
+
+Enable 2FA mode, which will the first time prompt for your 2FA secret
+(what's being the QR code usually shown when setting up 2FA, usually
+there's a way to get it as plain text). Once a 2FA secret is configured
+for this entry, it also generates your 2FA PIN when you request the
+password.
+
 ### Edit store
 
 ```

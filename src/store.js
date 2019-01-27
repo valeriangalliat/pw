@@ -27,7 +27,7 @@ function decrypt (pass, data) {
     .then(key => crypto.decipher('aes256', key)(encryptedData))
 }
 
-function encrypt(pass, data) {
+function encrypt (pass, data) {
   return crypto.randomBytes(64)
     .then(salt => pbkdf2(pass, salt)
       .then(key => crypto.cipher('aes256', key)(data))
