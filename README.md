@@ -2,9 +2,15 @@
 
 > Dead simple password manager.
 
+## Installation
+
+```sh
+npm install -g valeriangalliat/pw
+```
+
 ## Usage
 
-```
+```sh
 pw <name>
 ```
 
@@ -15,7 +21,7 @@ It will prompt you for your store password (by default, `~/.pw`, can be
 overridden with `PW_STORE` environment variable). If there's no store,
 the password you give will become your store password for further usages.
 
-```
+```sh
 pw <name> --2fa
 ```
 
@@ -27,7 +33,7 @@ password.
 
 ### Edit store
 
-```
+```sh
 pw -e
 pw --edit
 ```
@@ -37,7 +43,7 @@ the store after you're done editing.
 
 ### Update store password
 
-```
+```sh
 pw -u
 pw --update
 ```
