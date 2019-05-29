@@ -2,6 +2,7 @@ const crypto = require('crypto-promise')
 const denodeify = require('es6-denodeify')()
 const fs = require('fs')
 
+const stat = denodeify(fs.stat)
 const readFile = denodeify(fs.readFile)
 const writeFile = denodeify(fs.writeFile)
 
@@ -31,7 +32,7 @@ function encrypt (pass, data) {
   return crypto.randomBytes(64)
     .then(salt => pbkdf2(pass, salt)
       .then(key => crypto.cipher('aes256', key)(data))
-      .then(encryptedData => Buffer.concat([Buffer([42, 0, 64]), salt, encryptedData])))
+      .then(encryptedData => Buffer.concat([Buffer.from([42, 0, 64]), salt, encryptedData])))
 }
 
 module.exports = function makeStore (path, pass) {
@@ -58,5 +59,14 @@ module.exports = function makeStore (path, pass) {
       .then(write)
   }
 
-  return { read, write, get, set }
+  const store = { read, write, get, set }
+
+  return stat(path)
+    .then(stat => {
+      if (stat.isDirectory()) {
+        path = `${path}/pw`
+      }
+
+      return store
+    })
 }
