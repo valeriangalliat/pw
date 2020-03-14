@@ -7,7 +7,7 @@ const readFile = denodeify(fs.readFile)
 const writeFile = denodeify(fs.writeFile)
 
 const pbkdf2 = (pass, salt) =>
-  crypto.pbkdf2(pass, salt, 10000, 512, 'sha512')
+  crypto.pbkdf2(pass, salt, 10000, 32, 'sha512')
 
 const code = (code, f) => err => {
   if (err.code === code) return f(err)
@@ -15,24 +15,22 @@ const code = (code, f) => err => {
 }
 
 function decrypt (pass, data) {
-  if (!(data[0] === 42 && data[1] === 0)) {
-    // Protocol not recognized, maybe older version with no PBKDF2.
-    return crypto.decipher('aes256', pass)(data)
-  }
-
   const saltLength = data[2]
-  const salt = data.slice(3, 3 + saltLength)
-  const encryptedData = data.slice(3 + saltLength)
+  const ivLength = data[3]
+  const salt = data.slice(4, 4 + saltLength)
+  const iv = data.slice(4 + saltLength, 4 + saltLength + ivLength)
+  const encryptedData = data.slice(4 + saltLength + ivLength)
 
   return pbkdf2(pass, salt)
-    .then(key => crypto.decipher('aes256', key)(encryptedData))
+    .then(key => crypto.decipheriv('aes256', key, iv)(encryptedData))
 }
 
-function encrypt (pass, data) {
-  return crypto.randomBytes(64)
-    .then(salt => pbkdf2(pass, salt)
-      .then(key => crypto.cipher('aes256', key)(data))
-      .then(encryptedData => Buffer.concat([Buffer.from([42, 0, 64]), salt, encryptedData])))
+async function encrypt (pass, data) {
+  const [salt, iv] = await Promise.all([crypto.randomBytes(32), crypto.randomBytes(16)])
+  const key = await pbkdf2(pass, salt)
+  const encryptedData = await crypto.cipheriv('aes256', key, iv)(data)
+
+  return Buffer.concat([Buffer.from([42, 0, 32, 16]), salt, iv, encryptedData])
 }
 
 module.exports = function makeStore (path, pass) {
