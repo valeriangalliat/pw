@@ -1,6 +1,7 @@
 const { docopt } = require('docopt')
-const denodeify = require('es6-denodeify')()
-const read = denodeify(require('read'))
+const { promisify } = require('util')
+const read = promisify(require('read'))
+const { spawn } = require('child_process')
 
 const edit = require('./edit')
 const get = require('./get')
@@ -27,9 +28,12 @@ Options:
 
 const storePath = process.env.PW_STORE || `${process.env.HOME}/.pw`
 
-const getStore = () =>
-  read({ prompt: 'Password:', silent: true })
-    .then(pass => makeStore(storePath, pass))
+async function getStore () {
+  const pull = spawn('git', ['-C', storePath, 'pull'], { stdio: 'inherit' })
+  await new Promise((resolve, reject) => pull.on('close', code => code === 0 ? resolve() : reject(new Error(`git failed with code ${code}`))))
+  const pass = await read({ prompt: 'Password:', silent: true })
+  return makeStore(storePath, pass)
+}
 
 if (args['--edit']) {
   getStore()

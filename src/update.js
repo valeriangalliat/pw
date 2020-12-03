@@ -1,5 +1,5 @@
-const denodeify = require('es6-denodeify')()
-const read = denodeify(require('read'))
+const { promisify } = require('util')
+const read = promisify(require('read'))
 
 const makeStore = require('./store')
 

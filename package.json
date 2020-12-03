@@ -1,6 +1,6 @@
 {
   "name": "pw",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Dead simple password manager.",
   "homepage": "https://github.com/valeriangalliat/pw",
   "license": "Unlicense",
@@ -16,7 +16,7 @@
     "url": "https://github.com/valeriangalliat/pw.git"
   },
   "scripts": {
-    "lint": "standard && depcheck",
+    "lint": "standard && depcheck --ignores standard",
     "test": "npm run lint"
   },
   "dependencies": {
@@ -24,7 +24,6 @@
     "crypto-promise": "^2.0.0",
     "deep-equal": "^1.0.1",
     "docopt": "^0.6.2",
-    "es6-denodeify": "^0.1.5",
     "external-editor": "^2.0.1",
     "js-yaml": "^3.8.2",
     "password-generator": "^2.1.0",
@@ -35,6 +34,6 @@
   },
   "devDependencies": {
     "depcheck": "^0.6.7",
-    "standard": "^9.0.0"
+    "standard": "^16.0.3"
   }
 }

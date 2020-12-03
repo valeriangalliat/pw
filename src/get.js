@@ -1,41 +1,36 @@
 const clipboardy = require('clipboardy')
-const denodeify = require('es6-denodeify')()
-const read = denodeify(require('read'))
+const { promisify } = require('util')
+const read = promisify(require('read'))
 const speakeasy = require('speakeasy')
 const pw = require('./pw')
 
-module.exports = (store, name, twoFactor) =>
-  Promise.all([store.get(name), store.get(`${name}.2fa`)])
-    .then(([pass, secret]) => {
-      if (pass) {
-        return [pass, secret]
-      }
+async function get (store, name, twoFactor) {
+  let [pass, secret] = await Promise.all([store.get(name), store.get(`${name}.2fa`)])
 
-      pass = pw()
+  if (!pass) {
+    const answer = await read({ prompt: 'No such password, generate? (y/n)' })
 
-      return store.set(name, pass)
-        .then(() => [pass, secret])
-    })
-    .then(([pass, secret]) => {
-      if (secret || !twoFactor) {
-        return [pass, secret]
-      }
+    if (answer !== 'y') {
+      return
+    }
 
-      return read({ prompt: '2FA secret:' })
-        .then(secret => {
-          return store.set(`${name}.2fa`, secret)
-            .then(() => [pass, secret])
-        })
-    })
-    .then(([pass, secret]) => {
-      return clipboardy.write(pass)
-        .then(() => [pass, secret])
-    })
-    .then(([pass, secret]) => {
-      console.log('Password copied to clipboard')
+    pass = pw()
 
-      if (secret) {
-        const totp = speakeasy.totp({ secret, encoding: 'base32' })
-        console.log(`Your 2FA PIN is ${totp}`)
-      }
-    })
+    await store.set(name, pass)
+  }
+
+  if (twoFactor && !secret) {
+    secret = await read({ prompt: '2FA secret:' })
+    await store.set(`${name}.2fa`, secret)
+  }
+
+  await clipboardy.write(pass)
+  console.log('Password copied to clipboard')
+
+  if (secret) {
+    const totp = speakeasy.totp({ secret, encoding: 'base32' })
+    console.log(`Your 2FA PIN is ${totp}`)
+  }
+}
+
+module.exports = get

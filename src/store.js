@@ -1,10 +1,5 @@
 const crypto = require('crypto-promise')
-const denodeify = require('es6-denodeify')()
-const fs = require('fs')
-
-const stat = denodeify(fs.stat)
-const readFile = denodeify(fs.readFile)
-const writeFile = denodeify(fs.writeFile)
+const { stat, readFile, writeFile } = require('fs/promises')
 
 const pbkdf2 = (pass, salt) =>
   crypto.pbkdf2(pass, salt, 10000, 32, 'sha512')
