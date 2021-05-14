@@ -19,7 +19,7 @@ Usage:
   pw --version
 
 Options:
-  -h --help     Show this screen.
+  -h, --help    Show this screen.
   --version     Show version.
   -e, --edit    Edit store.
   -u, --update  Update store password.
